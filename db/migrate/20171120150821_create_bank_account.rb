@@ -1,6 +1,6 @@
 class CreateBankAccount < ActiveRecord::Migration[5.1]
   def up
-    create_table :bank_account do |t|
+    create_table :bank_accounts do |t|
       t.string :account
       t.string :agency
       t.string :cpf
@@ -11,6 +11,6 @@ class CreateBankAccount < ActiveRecord::Migration[5.1]
   end
 
   def down
-    drop_table :bank_account
+    drop_table :bank_accounts
   end
 end
