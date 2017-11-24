@@ -16,8 +16,14 @@ post '/add-purchase' do
     request.body.read,
     :symbolize_names => true
   )
-  purc_service.add_purchase jdata
-  return_message[:message] = "success"
+  purc_service.addPurchase jdata
+  return_message[:message] = "Success"
   return_message[:status] = 200
   return_message.to_json
+end
+
+get '/purchases-in/:month/:year' do
+  return_message = {}
+  purc_service.getPurchasesByMonth(
+    params[:month], params[:year]).to_json
 end
