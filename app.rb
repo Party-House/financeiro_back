@@ -1,6 +1,9 @@
 require 'sinatra'
 require 'sinatra/activerecord'
 require './config/environments' #database configuration
+require './services/purchase_service'
+
+purc_service = PurchaseService.new
 
 get '/' do
   "Hello, World!"
@@ -13,7 +16,8 @@ post '/add-purchase' do
     request.body.read,
     :symbolize_names => true
   )
-  return_message[:status] = "success"
-  return_message[:code] = 200
+  purc_service.add_purchase jdata
+  return_message[:message] = "success"
+  return_message[:status] = 200
   return_message.to_json
 end
