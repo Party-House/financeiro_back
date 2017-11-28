@@ -27,3 +27,7 @@ get '/purchases-in/:month/:year' do
   purc_service.getPurchasesByMonth(
     params[:month], params[:year]).to_json
 end
+
+get '/get-total-debt' do
+  purc_service.getTotalDebt.to_json
+end

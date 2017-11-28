@@ -11,3 +11,19 @@ user_list = [
 user_list.each do | name, debit |
   User.create(:name => name, :initial_debt => debit)
 end
+
+account_details = [
+  ["8215", "18687-8", "410.997.018.05", "Andre"],
+  ["7009-2", "27661-8", "323.795-128-50", "Duilio"],
+  ["1945-3", "1001344-5", "411.005.748-59", "Victor"],
+  ["1608", "48238-4", "443.678.618-80", "Vinicius"],
+]
+
+account_details.each do | account, agency, cpf, user_name |
+  BankAccount.create(
+    :account => account,
+    :agency => agency,
+    :cpf => cpf,
+    :user_id => User.find_by_name(user_name).id
+  )
+end
