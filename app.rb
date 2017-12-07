@@ -31,3 +31,16 @@ end
 get '/get-total-debt' do
   purc_service.getTotalDebt.to_json
 end
+
+post '/add-transfer' do
+  return_message = {}
+  request.body.rewind
+  jdata = JSON.parse(
+    request.body.read,
+    :symbolize_names => true
+  )
+  purc_service.addTransfer jdata
+  return_message[:message] = "Success"
+  return_message[:status] = 200
+  return_message.to_json
+end

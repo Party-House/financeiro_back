@@ -1,6 +1,7 @@
 require './models/purchase'
 require './models/purchase_exception'
 require './models/user'
+require './models/transfer'
 
 class PurchaseService
   def addPurchase (params)
@@ -17,6 +18,10 @@ class PurchaseService
     rescue
       purchase.destroy
     end
+  end
+
+  def addTransfer (params)
+    transfer = Transfer.create params[:transfer]
   end
 
   def getPurchasesByMonth(month, year)
@@ -43,11 +48,15 @@ class PurchaseService
     user_count = users.length
     users.each do | user |
       user_expense = Purchase.where(:user_id => user.id).sum(:value)
+      paid_to_others = Transfer.where(:payer_id => user.id).sum(:value)
+      received_from_others = Transfer.where(:receiver_id => user.id).sum(:value)
+      user_debt = (total_expenses / user_count) - user_expense + user.initial_debt
+      user_debt += (received_from_others - paid_to_others)
       result << {
         :user_name => user.name,
         :user_id => user.id,
         :user_expense => user_expense,
-        :user_debt => (total_expenses / user_count) - user_expense + user.initial_debt
+        :user_debt => user_debt
       }
     end
     exceptions_query = PurchaseException.all
@@ -56,7 +65,6 @@ class PurchaseService
     exception_users = []
     while not exceptions.empty?
       exception = exceptions.pop
-      puts("exception")
       purchase_id = exception[:purchase_id]
       while exception[:purchase_id] == purchase_id
         exception_users << exception[:user_id]
