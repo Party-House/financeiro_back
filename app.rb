@@ -1,8 +1,19 @@
 require 'sinatra'
+require 'sinatra/cross_origin'
 require 'sinatra/activerecord'
 require './config/environments' #database configuration
 require './services/purchase_service'
 require './services/transfer_service'
+
+configure do
+  enable :cross_origin
+end
+
+options "*" do
+  response.headers["Allow"] = "HEAD,GET,PUT,POST,DELETE,OPTIONS"
+  response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept"
+  200
+end
 
 transfer_service = TransferService.new
 purc_service = PurchaseService.new
@@ -31,7 +42,9 @@ get '/purchases-in/:month/:year' do
 end
 
 get '/get-total-debt' do
-  purc_service.getTotalDebt.to_json
+  response.headers["Access-Control-Allow-Origin"] = "*"
+  response.body = purc_service.getTotalDebt.to_json
+  response
 end
 
 post '/add-transfer' do
