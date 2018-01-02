@@ -2,7 +2,9 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require './config/environments' #database configuration
 require './services/purchase_service'
+require './services/transfer_service'
 
+transfer_service = TransferService.new
 purc_service = PurchaseService.new
 
 get '/' do
@@ -39,7 +41,7 @@ post '/add-transfer' do
     request.body.read,
     :symbolize_names => true
   )
-  purc_service.addTransfer jdata
+  transfer_service.addTransfer jdata
   return_message[:message] = "Success"
   return_message[:status] = 200
   return_message.to_json

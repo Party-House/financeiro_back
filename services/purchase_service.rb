@@ -20,10 +20,6 @@ class PurchaseService
     end
   end
 
-  def addTransfer (params)
-    transfer = Transfer.create params[:transfer]
-  end
-
   def getPurchasesByMonth(month, year)
     result = []
     purchases = Purchase.where(
@@ -47,16 +43,18 @@ class PurchaseService
     users = User.all
     user_count = users.length
     users.each do | user |
-      user_expense = Purchase.where(:user_id => user.id).sum(:value)
-      paid_to_others = Transfer.where(:payer_id => user.id).sum(:value)
-      received_from_others = Transfer.where(:receiver_id => user.id).sum(:value)
-      user_debt = (total_expenses / user_count) - user_expense + user.initial_debt
-      user_debt += (received_from_others - paid_to_others)
+      paid = Purchase.where(:user_id => user.id).sum(:value)
+      transfered = Transfer.where(:payer_id => user.id).sum(:value)
+      received = Transfer.where(:receiver_id => user.id).sum(:value)
+      debt = (total_expenses / user_count) - paid + user.initial_debt
+      debt += (received - transfered)
       result << {
         :user_name => user.name,
         :user_id => user.id,
-        :user_expense => user_expense,
-        :user_debt => user_debt
+        :paid => paid,
+        :debt => debt,
+        :received => received,
+        :transfered => transfered
       }
     end
     exceptions_query = PurchaseException.all
@@ -74,10 +72,10 @@ class PurchaseService
       end
       exception_count = exception_users.length
       result.each do | user |
-        if exception_users.include? user[:user_id]
-          user[:user_debt] -= (Purchase.find(purchase_id).value) / user_count
-        else
-          user[:user_debt] +=  (exception_count / user_count * (user_count - exception_count)) * (Purchase.find(purchase_id).value)
+        user[:debt] -= (Purchase.find(purchase_id).value) / user_count
+        if not exception_users.include? user[:user_id]
+          puts (Purchase.find(purchase_id).value) / (user_count - exception_count)
+          user[:debt] += (Purchase.find(purchase_id).value) / (user_count - exception_count)
         end
       end
     end
