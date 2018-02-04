@@ -4,6 +4,7 @@ require 'sinatra/activerecord'
 require './config/environments' #database configuration
 require './services/purchase_service'
 require './services/transfer_service'
+require './services/user_service'
 
 configure do
   enable :cross_origin
@@ -17,22 +18,29 @@ end
 
 transfer_service = TransferService.new
 purc_service = PurchaseService.new
+user_service = UserService.new
 
 get '/' do
   "Hello, World!"
 end
 
+get '/users' do
+  response.headers["Access-Control-Allow-Origin"] = "*"
+  response.body = user_service.getUsers.to_json
+  response
+end
+
 post '/add-purchase' do
-  return_message = {}
   request.body.rewind
+  puts request.body
   jdata = JSON.parse(
     request.body.read,
     :symbolize_names => true
   )
   purc_service.addPurchase jdata
-  return_message[:message] = "Success"
-  return_message[:status] = 200
-  return_message.to_json
+  response.headers["Access-Control-Allow-Origin"] = "*"
+  response.body = "Success"
+  response
 end
 
 get '/purchases-in/:month/:year' do

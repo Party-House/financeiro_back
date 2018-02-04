@@ -74,11 +74,11 @@ class PurchaseService
       result.each do | user |
         user[:debt] -= (Purchase.find(purchase_id).value) / user_count
         if not exception_users.include? user[:user_id]
-          puts (Purchase.find(purchase_id).value) / (user_count - exception_count)
           user[:debt] += (Purchase.find(purchase_id).value) / (user_count - exception_count)
         end
       end
     end
+    puts result
     result
   end
 end
