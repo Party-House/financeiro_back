@@ -30,6 +30,12 @@ get '/users' do
   response
 end
 
+get '/bank-accounts' do
+  response.headers["Access-Control-Allow-Origin"] = "*"
+  response.body = user_service.getBankAccounts.to_json
+  response
+end
+
 post '/add-purchase' do
   request.body.rewind
   puts request.body
