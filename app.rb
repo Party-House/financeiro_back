@@ -50,9 +50,10 @@ post '/add-purchase' do
 end
 
 get '/purchases-in/:month/:year' do
-  return_message = {}
-  purc_service.getPurchasesByMonth(
+  response.headers["Access-Control-Allow-Origin"] = "*"
+  response.body = purc_service.getPurchasesByMonth(
     params[:month], params[:year]).to_json
+  response
 end
 
 get '/get-total-debt' do
