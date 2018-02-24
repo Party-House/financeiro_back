@@ -1,0 +1,1 @@
+CORS_ORIGIN = "https://party-hard-app.herokuapp.com"
