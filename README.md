@@ -12,4 +12,4 @@
   - ruby app.rb
 
 ## Local Development
-  Change the value of CORS_ORIGIN in 'constants.rb' to 'http://localhost:3000'
+  Change the value of CORS_ORIGIN in 'constants.rb' to '/http:\/\/localhost:3000/'

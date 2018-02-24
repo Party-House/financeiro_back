@@ -1,1 +1,1 @@
-CORS_ORIGIN = "https://party-hard-app.herokuapp.com"
+CORS_ORIGIN = /http(s)?:\/\/party-hard-app.herokuapp.com/

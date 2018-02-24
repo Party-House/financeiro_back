@@ -26,39 +26,53 @@ get '/' do
 end
 
 get '/users' do
-  response.headers["Access-Control-Allow-Origin"] = CORS_ORIGIN
+  origin = request.env['HTTP_ORIGIN']
+  if origin[CORS_ORIGIN]
+    response.headers["Access-Control-Allow-Origin"] = origin[CORS_ORIGIN]
+  end
   response.body = user_service.getUsers.to_json
   response
 end
 
 get '/bank-accounts' do
-  response.headers["Access-Control-Allow-Origin"] = CORS_ORIGIN
+  origin = request.env['HTTP_ORIGIN']
+  if origin[CORS_ORIGIN]
+    response.headers["Access-Control-Allow-Origin"] = origin[CORS_ORIGIN]
+  end
   response.body = user_service.getBankAccounts.to_json
   response
 end
 
 post '/add-purchase' do
   request.body.rewind
-  puts request.body
   jdata = JSON.parse(
     request.body.read,
     :symbolize_names => true
   )
   purc_service.addPurchase jdata
-  response.headers["Access-Control-Allow-Origin"] = CORS_ORIGIN
+  origin = request.env['HTTP_ORIGIN']
+  if origin[CORS_ORIGIN]
+    response.headers["Access-Control-Allow-Origin"] = origin[CORS_ORIGIN]
+  end
   response.body = "Success"
   response
 end
 
 get '/purchases-in/:month/:year' do
-  response.headers["Access-Control-Allow-Origin"] = CORS_ORIGIN
+  origin = request.env['HTTP_ORIGIN']
+  if origin[CORS_ORIGIN]
+    response.headers["Access-Control-Allow-Origin"] = origin[CORS_ORIGIN]
+  end
   response.body = purc_service.getPurchasesByMonth(
     params[:month], params[:year]).to_json
   response
 end
 
 get '/get-total-debt' do
-  response.headers["Access-Control-Allow-Origin"] = CORS_ORIGIN
+  origin = request.env['HTTP_ORIGIN']
+  if origin[CORS_ORIGIN]
+    response.headers["Access-Control-Allow-Origin"] = origin[CORS_ORIGIN]
+  end
   response.body = purc_service.getTotalDebt.to_json
   response
 end
