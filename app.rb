@@ -78,14 +78,16 @@ get '/get-total-debt' do
 end
 
 post '/add-transfer' do
-  return_message = {}
   request.body.rewind
   jdata = JSON.parse(
     request.body.read,
     :symbolize_names => true
   )
   transfer_service.addTransfer jdata
-  return_message[:message] = "Success"
-  return_message[:status] = 200
-  return_message.to_json
+  origin = request.env['HTTP_ORIGIN']
+  if origin[CORS_ORIGIN]
+    response.headers["Access-Control-Allow-Origin"] = origin[CORS_ORIGIN]
+  end
+  response.body = "Success"
+  response
 end
