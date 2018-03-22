@@ -1,6 +1,0 @@
-development:
-  adapter: postgresql
-  database: party_house_finance
-  username: <%= ENV['PG_USER'] %>
-  password: <%= ENV['PG_PASS'] %>
-host: localhost
