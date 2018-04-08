@@ -2,10 +2,22 @@ require './models/purchase'
 require './models/purchase_exception'
 require './models/user'
 require './models/transfer'
+require './models/debt'
 
 class PurchaseService
   def addPurchase (params)
     purchase = Purchase.create params[:purchase]
+    debts = Debt.joins(
+      "INNER JOIN users ON users.id = debts.user_id"
+      ).where(users:{deleted_at: nil})
+    debts.each do | debt |
+      debt.debt_value += purchase.value / debts.length
+      if debt.user_id == purchase.user_id
+        debt.debt_value -= purchase.value
+        debt.paid += purchase.value
+      end
+      debt.save
+    end
     begin
       if params.has_key? :exceptions
         params[:exceptions].each do | exception |
@@ -39,20 +51,18 @@ class PurchaseService
 
   def getTotalDebt()
     result = []
-    total_expenses = Purchase.sum(:value)
     users = User.all
-    user_count = users.length
     users.each do | user |
-      paid = Purchase.where(:user_id => user.id).sum(:value)
       transfered = Transfer.where(:payer_id => user.id).sum(:value)
       received = Transfer.where(:receiver_id => user.id).sum(:value)
-      debt = (total_expenses / user_count) - paid + user.initial_debt
-      debt += (received - transfered)
+      user_debt = Debt.where(:user_id => user.id).sum(:debt_value)
+      paid = Debt.where(:user_id => user.id).sum(:paid)
+      user_debt += user.initial_debt + (received - transfered)
       result << {
         :user_name => user.name,
         :user_id => user.id,
         :paid => paid,
-        :debt => debt,
+        :debt => user_debt,
         :received => received,
         :transfered => transfered
       }
@@ -72,13 +82,24 @@ class PurchaseService
       end
       exception_count = exception_users.length
       result.each do | user |
-        user[:debt] -= (Purchase.find(purchase_id).value) / user_count
+        purchase = Purchase.find(purchase_id)
+        user[:debt] -= (purchase.value) / getActiveUsersCount(users, purchase.purchase_date)
         if not exception_users.include? user[:user_id]
-          user[:debt] += (Purchase.find(purchase_id).value) / (user_count - exception_count)
+          user[:debt] += (purchase.value) / (getActiveUsersCount(users, purchase.purchase_date) - exception_count)
         end
       end
     end
     puts result
     result
+  end
+
+  def getActiveUsersCount(users, date)
+    user_count = 0
+    users.each do | u |
+      if u.deleted_at.nil? or u.deleted_at >= date
+        user_count += 1
+      end
+    end
+    user_count
   end
 end
