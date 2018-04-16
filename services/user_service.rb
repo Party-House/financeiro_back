@@ -4,7 +4,7 @@ require './models/bank_account'
 class UserService
   def getUsers ()
     result = []
-    users = User.all
+    users = User.where :left_house => false
     users.each do | p |
       result << {
         :id => p.id,
