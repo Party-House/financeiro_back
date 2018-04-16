@@ -51,7 +51,7 @@ class PurchaseService
 
   def getTotalDebt()
     result = []
-    users = User.all
+    users = User.where :left_house => false
     users.each do | user |
       transfered = Transfer.where(:payer_id => user.id).sum(:value)
       received = Transfer.where(:receiver_id => user.id).sum(:value)
