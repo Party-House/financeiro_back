@@ -62,7 +62,7 @@ class PurchaseService
         :user_name => user.name,
         :user_id => user.id,
         :paid => paid,
-        :debt => user_debt,
+        :debt => user_debt.round(2),
         :received => received,
         :transfered => transfered
       }
@@ -86,10 +86,10 @@ class PurchaseService
         user[:debt] -= (purchase.value) / getActiveUsersCount(users, purchase.purchase_date)
         if not exception_users.include? user[:user_id]
           user[:debt] += (purchase.value) / (getActiveUsersCount(users, purchase.purchase_date) - exception_count)
+          user[:debt] = user[:debt].round(2)
         end
       end
     end
-    puts result
     result
   end
 
