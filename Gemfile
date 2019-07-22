@@ -1,9 +1,9 @@
 source "https://rubygems.org"
 ruby '2.3.0'
 
-gem "sinatra"
+gem "sinatra", '~> 2.0.5'
 gem "sinatra-cross_origin"
 gem "activerecord"
 gem "sinatra-activerecord"
 gem "pg"
-gem "rake"
+gem 'rack', '~> 2.0.7'
