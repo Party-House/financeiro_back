@@ -6,4 +6,4 @@ gem "sinatra-cross_origin"
 gem "activerecord"
 gem "sinatra-activerecord"
 gem "pg"
-gem 'rack', '~> 2.0.7'
+gem 'rack', '~> 2.0.8'
