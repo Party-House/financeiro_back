@@ -33,7 +33,7 @@ GEM
     sinatra-cross_origin (0.4.0)
     thread_safe (0.3.6)
     tilt (2.0.9)
-    tzinfo (1.2.5)
+    tzinfo (1.2.10)
       thread_safe (~> 0.1)
 
 PLATFORMS
@@ -43,7 +43,7 @@ DEPENDENCIES
   activerecord
   pg
   rack (~> 2.0.7)
-  sinatra
+  sinatra (~> 2.0.5)
   sinatra-activerecord
   sinatra-cross_origin
 
